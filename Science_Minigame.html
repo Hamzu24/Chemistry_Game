@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Science Minigame Test</title>
+<style>
+</style>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+function Random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+    
+function hasNumber(myString) {
+  console.log(/\d/.test(myString));
+  return /\d/.test(myString);
+}
+    
+var keyState = {};
+const chemicalOptions = ['H2O', "CO2", "SO2", "NO2", "C6H12O6", "C8H9NO2", "C2H4O", "C3H7NO2", "C6H8O6", "C3H4N2S"];
+var chemicalValid = [];
+var flaskFull = 0;
+var chemicals = 0;
+var targetChemical = 'CO2';
+var atomType = 0;
+    
+$(document).ready(function() {
+    makeFlask();
+    makeSelectedBar();
+    makeTargetChemBar();
+    moveLoop();
+});
+
+function makeSelectedBar() {
+$('body').append('<div id="selectedBar"><center><h1 id="symbolBar"></h1></center></div>');
+$('#selectedBar').css('position', 'absolute');
+$('#selectedBar').css('width', '750px');
+$('#selectedBar').css('height', '50px');
+$('#selectedBar').css('z-index', '100');
+$('#selectedBar').css('line-height', '10px');
+$('#selectedBar').css('top', ($(document).height()-$('#selectedBar').height()-25).toString()+'px');
+$('#selectedBar').css('left', (($(document).width()/2)-($('#selectedBar').width()/2)).toString()+'px');
+$('#selectedBar').css('background', 'linear-gradient(rgb(255, 0, 0), rgb(215, 40, 40))');
+$('#selectedBar').css('padding-bottom', '10px');
+}
+
+function makeTargetChemBar() {
+$('body').append('<div id="targetBar"><center><h1 id="targetText">CO2</h1></center></div>');
+$('#targetBar').css('position', 'absolute');
+$('#targetBar').css('width', '150px');
+$('#targetBar').css('height', '50px');
+$('#targetBar').css('z-index', '100');
+$('#targetBar').css('line-height', '10px');
+$('#targetBar').css('left', (($(document).width()/2)-($('#targetBar').width()/2)).toString()+'px');
+$('#targetBar').css('top', '50px');
+$('#targetBar').css('background', 'linear-gradient(rgb(0, 255, 0), rgb(40, 215, 40))');
+$('#targetBar').css('margin-bottom', '10px');
+}
+
+function makeFlask() {
+$('body').append('<div id="flask"></div>');
+$('#flask').css('position', 'absolute');
+$('#flask').css('padding', '0px');
+$('#flask').css('height', '150px');
+$('#flask').css('width', '100px');
+$('#flask').css('top', $(document).height()-$('#flask').height()-85);
+$('#flask').css('left', ($(document).width()/2)-($('#flask').width()/2));
+$('#flask').append('<div id="flaskTop"></div>');
+$('#flaskTop').css('position', 'relative');
+$('#flaskTop').css('width', '20px');
+$('#flaskTop').css('height', '50px');
+$('#flaskTop').css('left', ($('#flask').width()/2)-($('#flaskTop').width()/2));
+$('#flaskTop').css('background', 'linear-gradient(rgba(211, 211, 211, 0.5), rgba(121, 121, 121, 0.5))');
+$('#flask').append('<div id="flaskBase"></div>');
+$('#flaskBase').css('width', '100px');
+$('#flaskBase').css('height', '100px');
+$('#flaskBase').css('position', 'relative');
+$('#flaskBase').css('width', '100px');
+$('#flaskBase').css('height', '100px');
+$('#flaskBase').css('background', 'linear-gradient(rgba(211, 211, 211, 0.5), rgba(121, 121, 121, 0.5))');
+$('#flaskBase').css('border-radius', '75px');
+}
+    
+function newChemical()  {
+atomType = Random(0, 4);
+switch(atomType) {
+case 0:
+$('body').append('<div id="chemical'+chemicals.toString()+'"><center><p id="chemicalText'+chemicals.toString()+'">H</p></center></div>');
+$('#chemicalText'+chemicals.toString()).css('color', 'ghostwhite');
+$('#chemical'+chemicals.toString()).css('background', 'linear-gradient(rgb(0, 0, 211), rgb(50, 50, 100))');
+$('#chemical'+chemicals.toString()).css('width', '25px');
+$('#chemical'+chemicals.toString()).css('height', '25px');
+chemicalValid.push({name:'chemical'+chemicals.toString(), validity:true, symbol:'H'});
+$('#chemicalText'+chemicals.toString()).css('margin-top', '6px');
+$('#chemical'+chemicals.toString()).css('font-size', '12.5px');
+break;
+case 1:
+$('body').append('<div id="chemical'+chemicals.toString()+'"><center><p id="chemicalText'+chemicals.toString()+'">C</p></center></div>');
+$('#chemicalText'+chemicals.toString()).css('color', 'ghostwhite');
+$('#chemical'+chemicals.toString()).css('background', 'linear-gradient(rgb(0, 211, 0), rgb(50, 100, 50))');
+$('#chemical'+chemicals.toString()).css('width', '40px');
+$('#chemical'+chemicals.toString()).css('height', '40px');
+chemicalValid.push({name:'chemical'+chemicals.toString(), validity:true, symbol:'C'});
+$('#chemicalText'+chemicals.toString()).css('margin-top', '7px');
+$('#chemical'+chemicals.toString()).css('font-size', '25px');
+break;
+case 2:
+$('body').append('<div id="chemical'+chemicals.toString()+'"><center><p id="chemicalText'+chemicals.toString()+'">N</p></center></div>');
+$('#chemicalText'+chemicals.toString()).css('color', 'ghostwhite');
+$('#chemical'+chemicals.toString()).css('background', 'linear-gradient(rgb(211, 0, 0), rgb(100, 50, 50))');
+$('#chemical'+chemicals.toString()).css('width', '43px');
+$('#chemical'+chemicals.toString()).css('height', '43px');
+chemicalValid.push({name:'chemical'+chemicals.toString(), validity:true, symbol:'N'});
+$('#chemicalText'+chemicals.toString()).css('margin-top', '8px');
+$('#chemical'+chemicals.toString()).css('font-size', '26px');
+break;
+case 3:
+$('body').append('<div id="chemical'+chemicals.toString()+'"><center><p id="chemicalText'+chemicals.toString()+'">O</p></center></div>');
+$('#chemicalText'+chemicals.toString()).css('color', 'ghostwhite');
+$('#chemical'+chemicals.toString()).css('background', 'linear-gradient(rgb(238, 130, 238), rgb(190, 150, 190))');
+$('#chemical'+chemicals.toString()).css('width', '47px');
+$('#chemical'+chemicals.toString()).css('height', '47px');
+chemicalValid.push({name:'chemical'+chemicals.toString(), validity:true, symbol:'O'});
+$('#chemicalText'+chemicals.toString()).css('margin-top', '9px');
+$('#chemical'+chemicals.toString()).css('font-size', '27px');
+break;
+case 4:
+$('body').append('<div id="chemical'+chemicals.toString()+'"><center><p id="chemicalText'+chemicals.toString()+'">S</p></center></div>');
+$('#chemicalText'+chemicals.toString()).css('color', 'ghostwhite');
+$('#chemical'+chemicals.toString()).css('background', 'linear-gradient(rgb(255, 165, 0), rgb(205, 115, 50))');
+$('#chemical'+chemicals.toString()).css('width', '55px');
+$('#chemical'+chemicals.toString()).css('height', '55px');
+chemicalValid.push({name:'chemical'+chemicals.toString(), validity:true, symbol:'S'});
+$('#chemicalText'+chemicals.toString()).css('margin-top', '12px');
+$('#chemical'+chemicals.toString()).css('font-size', '29px');
+break;
+}
+    $('#chemical'+chemicals.toString()).css('position', 'absolute');
+$('#chemical'+chemicals.toString()).css('vertical-align', 'middle');
+$('#chemical'+chemicals.toString()).css('display', 'table-cell');
+$('#chemical'+chemicals.toString()).css('border-radius', '200px');
+    $('#chemical'+chemicals.toString()).css('left', (Random(5, 95)).toString()+'%');
+    chemicals++;
+}
+
+function addSymbol(number) {
+    let finalLetter = ($("#symbolBar").html()).substring(($("#symbolBar").html()).length-1, ($("#symbolBar").html()).length);
+    let penultimateLetter = ($("#symbolBar").html()).substring(($("#symbolBar").html()).length-2, ($("#symbolBar").html()).length-1);
+    console.log(finalLetter);
+    if (hasNumber(finalLetter) === true && penultimateLetter === chemicalValid[number].symbol) {
+        finalLetter = parseInt(finalLetter);
+        if (finalLetter < 9) {
+            finalLetter += 1;
+            $("#symbolBar").html(($("#symbolBar").html()).substring(0, ($("#symbolBar").html()).length-1)+""+finalLetter.toString());
+        }
+    } else if (finalLetter != chemicalValid[number].symbol) {
+        $('#symbolBar').append(''+chemicalValid[number].symbol);
+    } else {
+        $("#symbolBar").append("2");
+    }
+}
+    
+function submitChemical() {
+    console.log($('#symbolBar').html());
+    if ($('#symbolBar').html() === targetChemical) {
+        alert('Well Done!');
+        getNewChemical();
+    } else {
+        alert('Oops!');
+    }
+    $('#symbolBar').html('');
+}
+
+setInterval(function() {
+    for (var i = 0; i < chemicals; i++) {
+        if (chemicalValid[i].validity === true) {
+            $('#chemical'+i.toString()).offset({left: $('#chemical'+i.toString()).offset().left, top: $('#chemical'+i.toString()).offset().top+2});
+            if ($('#chemical'+i.toString()).offset().left + $('#chemical'+i.toString()).width() > ($('#flask').offset().left+($('#flask').width()/2))-($('#flaskTop').width()/2)) {
+                if ($('#chemical'+i.toString()).offset().left < ($('#flask').offset().left+($('#flask').width()/2))+($('#flaskTop').width()/2)) {
+                    if ($('#chemical'+i.toString()).offset().top+$('#chemical'+i.toString()).height() > $('#flask').offset().top) {
+                        if ($('#chemical'+i.toString()).offset().top < $('#flask').offset().top+10) {
+                            $('#chemical'+i.toString()).hide();
+                            chemicalValid[i].validity = false;
+                            addSymbol(i);
+                        }
+                    }
+                }
+            }
+if ($('#chemical'+i.toString()).offset().top+$('#chemical'+i.toString()).height() > $(document).height()) {
+        console.log('O');
+        $('#chemical'+i.toString()).hide();
+                        chemicalValid[i].validity = false;
+}
+        }
+    }
+}, 25);
+    
+function getNewChemical() {
+    let newChemical = chemicalOptions[Random(0, chemicalOptions.length-1)];
+    $("#targetText").html(newChemical+"");
+    targetChemical = newChemical;
+}
+    
+setInterval(function() {
+    newChemical();
+}, Random(1250, 2500));
+    
+$(document).keydown(function(e) {
+    var key = e.keyCode;
+    switch(key) {
+        case 13: //enter
+            submitChemical();
+        break;
+        case 67: //c
+            $("#symbolBar").html("<center><h1 id='symbolBar'></h1></center>");
+        break;
+    }
+});
+    
+function moveLoop() {
+    if (keyState[37] || keyState[65]){
+            if ($('#flask').offset().left > 0) {
+                $('#flask').offset({left: $('#flask').offset().left-12, top: $('#flask').offset().top});
+            }
+        }
+    
+    if (keyState[39] || keyState[68]) {
+        if ($('#flask').offset().left+$('#flask').width()+10< $(document).width()) {
+            $('#flask').offset({left: $('#flask').offset().left+12, top: $('#flask').offset().top});
+        }
+    }
+    setTimeout(moveLoop, 20);
+}
+    
+window.addEventListener('keydown',function(e){
+    keyState[e.keyCode || e.which] = true;
+},true);    
+window.addEventListener('keyup',function(e){
+    keyState[e.keyCode || e.which] = false;
+},true);
+</script>
+</body>
+</html>
